@@ -4,7 +4,7 @@ import users from '../../assets/data/users';
 import { useState, useEffect } from 'react';
 import UserProfileHeader from '../../src/components/UserProfileHeader';
 import posts from '../../assets/data/posts';
-import Post from '../../src/components/Post';
+import Post from '../../src/components/Posted';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { DataStore } from 'aws-amplify';
 import { User, Post as PostModel } from '../../src/models';
@@ -77,6 +77,7 @@ const ProfilePage = () => {
           setIsSubscribed={setIsSubscribed}
         />
       )}
+      
     />
   );
 };

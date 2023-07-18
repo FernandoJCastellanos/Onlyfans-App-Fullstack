@@ -1,16 +1,17 @@
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { Entypo, AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
-import { User } from '../models';
+import { User, Post } from '../models';
 import { DataStore, Storage } from 'aws-amplify';
 
 
 
-const Post = ({ post }) => {
+const Posted = ({ post }) => {
 
   const [user, setUser] = useState();
   const [imageUri, setImageUri] = useState();
-
+  const [isLiked, setIsLiked] = useState(false);
+  
   useEffect(() => {
     DataStore.query(User, post.userID).then(setUser);
   }, []);
@@ -20,6 +21,35 @@ const Post = ({ post }) => {
       Storage.get(post.image).then(setImageUri);
     }
   }, [post.image]);
+
+  const [currentLikes, setCurrentLikes] = useState(post.likes);
+
+  const handleLikes = (n) => {
+    setCurrentLikes(prevLikes => prevLikes + n);
+  };
+  const handleIsLiked = () => {
+    setIsLiked(!isLiked)
+  };
+  const handlePress = async (e, post) => {
+
+    if (isLiked) {
+      e.preventDefault();
+      const postToChange = await DataStore.query(Post, post.id);
+      await DataStore.save(Post.copyOf(postToChange, updated => {
+        updated.likes -= 1;
+      }));
+      handleLikes(-1);
+      handleIsLiked();
+    } else {
+      e.preventDefault();
+      const postToChange = await DataStore.query(Post, post.id);
+      await DataStore.save(Post.copyOf(postToChange, updated => {
+        updated.likes += 1;
+      }));
+      handleLikes(1);
+      handleIsLiked();
+    };
+  };
 
   return (
     <View style={{ marginVertical: 15 }}>
@@ -35,7 +65,7 @@ const Post = ({ post }) => {
         />
         <View>
           <Text style={{ fontWeight: '600', fontSize: 16, marginBottom: 3 }}>
-            {post.User?.name}
+            {user?.name}
           </Text>
           <Text style={{ color: 'gray' }}>@{user?.handle}</Text>
         </View>
@@ -59,13 +89,24 @@ const Post = ({ post }) => {
       )
       }
 
-      <View style={{ margin: 10, flexDirection: 'row' }}>
-        <AntDesign
-          name="hearto"
-          size={22}
-          color="gray"
-          style={{ marginRight: 15 }}
-        />
+      <View style={{ margin: 10, flexDirection: 'row' }}>          
+        <TouchableOpacity>
+          <AntDesign
+            onPress={(e) => handlePress(e, post)}
+              // onPress={async e => {
+              // e.preventDefault()
+              // const postToChange = await DataStore.query(Post, post.id)
+              // await DataStore.save(Post.copyOf(postToChange, updated => {
+              //   updated.likes += 1
+              // }))}
+              // }
+            name={isLiked ? "heart" : "hearto"}
+            size={22}
+            color={isLiked ? "red" : "grey"}
+            style={{ marginRight: 15 }}
+          />
+        </TouchableOpacity>
+
 
         <FontAwesome5
           name="dollar-sign"
@@ -76,10 +117,10 @@ const Post = ({ post }) => {
       </View>
 
       <Text style={{ fontWeight: '500', marginHorizontal: 10 }}>
-        {post.likes} Likes
+        {currentLikes} Likes
       </Text>
     </View>
   );
 };
 
-export default Post;
+export default Posted;

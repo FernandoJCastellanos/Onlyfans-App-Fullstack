@@ -24,8 +24,16 @@ export default function Page() {
 
   return (
     <View style={styles.container}>
-      <Link href={'/newPost'}>New post</Link>
-      <Text onPress={() => signOut()}>Sign out</Text>
+      <View style={styles.optioncontainer}>
+        <View style={styles.newpostcontainer}>
+          <Link style={styles.newpost} href={'/newPost'}>New post</Link>
+        </View>
+        <View style={styles.signoutcontainer}>
+          <Text style={styles.signout}onPress={() => signOut()}>Sign out</Text>
+        </View>
+
+      </View>
+
 
       <FlatList
         data={users}
@@ -42,4 +50,46 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingTop: 75,
   },
+  optioncontainer: {
+    flex: 1,
+    flexDirection: 'row',
+    
+    display: "flex",
+    
+  },
+  newpostcontainer: {
+    position: "relative",
+    display: "flex",
+    flex: 1,
+    backgroundColor: 'lightblue',
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  newpost: {
+    position: "relative",
+    display: "flex",
+    paddingLeft: "33%",
+    paddingRight: "33%",
+    paddingTop: "10%",
+    paddingBottom: "10%",
+
+  },
+  signoutcontainer: {
+    position: "relative",
+    display: "flex",
+    flex: 1,
+    backgroundColor: "grey",
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  signout: {
+    position: "relative",
+    display: "flex",
+    paddingLeft: "33%",
+    paddingRight: "33%",
+    paddingTop: "10%",
+    paddingBottom: "10%",
+  }
 });
